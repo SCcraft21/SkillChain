@@ -1,140 +1,126 @@
 ```markdown
-# Blockchain-Based Certificate Credentialing System  
-**Smart India Hackathon Project – MVP**
+# CertiChain: Blockchain-Based Vocational Certificate Credentialing System
 
-A tamper-proof, decentralized certificate issuance and verification platform for vocational schools, students, and HR recruiters. Built on **Polygon Mumbai Testnet** with **IPFS (via Pinata)** for secure, scalable file storage.
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Solidity](https://img.shields.io/badge/Solidity-%23363636.svg?style=for-the-badge&logo=solidity&logoColor=white)](https://soliditylang.org/)
+[![Polygon](https://img.shields.io/badge/Polygon-%238250F5.svg?style=for-the-badge&logo=polygon&logoColor=white)](https://polygon.technology/)
+[![IPFS](https://img.shields.io/badge/IPFS-%2365C2A5.svg?style=for-the-badge&logo=ipfs&logoColor=white)](https://ipfs.tech/)
+[![MetaMask](https://img.shields.io/badge/MetaMask-%23F6851B.svg?style=for-the-badge&logo=metamask&logoColor=white)](https://metamask.io/)
+[![Pinata](https://img.shields.io/badge/Pinata-%23007ACC.svg?style=for-the-badge&logo=pinata&logoColor=white)](https://pinata.cloud/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-### Features
-- **Single Certificate Issuance** – Schools can issue individual certificates with PDF upload.
-- **Bulk Certificate Issuance** – Upload an Excel file to issue multiple certificates in one transaction.
-- **Student Ownership** – Students can view their certificate details using a unique Certificate ID.
-- **HR Verification** – Recruiters can verify authenticity by uploading the certificate file (no intermediary needed).
-- **Immutable & Transparent** – All certificate metadata and IPFS hashes stored on-chain.
-- **Zero-Knowledge Proof of Authenticity** – Verification compares SHA-256 hash of the file with the on-chain IPFS hash.
+**A tamper-proof, decentralized platform for issuing, owning, and verifying vocational certificates.**  
+Built for **Smart India Hackathon** – Eliminating fake certificates with blockchain immutability.
 
-### Architecture Overview
 
-```
-+------------------+       +-------------------+       +---------------------+
-|   React Frontend | <---> |   MetaMask Wallet | <---> | Polygon Mumbai Chain |
-+------------------+       +-------------------+       +---------------------+
-                                   ^                           ^
-                                   |                           |
-                            Pinata API (IPFS)             Smart Contract
-                                   |                           |
-                            Upload PDF/JSON            Store IPFS Hash + Metadata
-                                   v                           v
-                          Decentralized Storage         Immutable Verification
-```
 
-- **On-Chain**: Certificate ID → Metadata (student name, course, school, issue date) + IPFS CID (hash)
-- **Off-Chain**: Full certificate PDF (single) or JSON (bulk) stored on IPFS via Pinata
+
+### Key Features
+- **Single & Bulk Issuance** – Schools issue certificates (PDF or batch via Excel) in one transaction.
+- **Student Ownership** – View certificate details instantly using unique CertID.
+- **Instant HR Verification** – Upload certificate file → SHA-256 hash comparison → "Valid/Invalid" result (no issuer needed).
+- **Decentralized Storage** – Full files on IPFS (pinned via Pinata), metadata + hash on-chain.
+- **Low Cost & Fast** – Deployed on Polygon (high throughput, low fees).
 
 ### Tech Stack
-- **Smart Contract**: Solidity (^0.8.13) – Deployed with Truffle
-- **Blockchain**: Polygon Mumbai Testnet (low gas, fast confirmation)
-- **File Storage**: IPFS + Pinata Cloud (pinning service)
-- **Frontend**: React.js + Tailwind CSS + Web3.js
-- **Libraries**: 
-  - `xlsx` – Excel parsing for bulk issuance
-  - `js-sha256` – Client-side hash verification
-  - `axios` – Pinata API calls
 
-### Project Structure
-```
-cert-mvp/
-├── contracts/
-│   └── Certification.sol          # Main smart contract
-├── migrations/                    # Truffle deployment scripts
-├── truffle-config.js              # Network & compiler config
-├── client/
-│   ├── src/
-│   │   └── App.js                 # Complete frontend logic
-│   ├── public/
-│   └── package.json
-└── README.md
-```
+<div align="center">
 
-### Quick Start Guide
 
-#### 1. Prerequisites
-- Node.js (v18+)
-- MetaMask browser extension
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+### System Architecture
+
+
+
+
+1. **Issuer** uploads certificate → Pinata pins to IPFS → Gets CID (hash).
+2. CID + metadata stored on-chain via smart contract.
+3. **Student** queries contract with CertID → Views details.
+4. **Verifier** uploads file → Local hash computed → Compared with on-chain CID → Instant result.
+
+### Quick Setup & Run
+
+#### Prerequisites
+- Node.js v18+
+- MetaMask (with Polygon network added)
 - Test MATIC from [Polygon Faucet](https://faucet.polygon.technology/)
-- Pinata account ([pinata.cloud](https://pinata.cloud))
+- Pinata account
 
-#### 2. Setup & Deployment
+#### Steps
 ```bash
-# Clone or extract the project
+# 1. Clone & install
+git clone <your-repo-url>
 cd cert-mvp
-
-# Install dependencies
 npm install
 npm install -g truffle
 npm install @truffle/hdwallet-provider
 
-# Configure wallet (replace mnemonic in truffle-config.js)
-# WARNING: Never commit your real mnemonic!
+# 2. Deploy Smart Contract (use Polygon Amoy Testnet - recommended as Mumbai is deprecated)
+# Update truffle-config.js with your mnemonic & Amoy RPC: https://rpc-amoy.polygon.technology/
+truffle migrate --network amoy
 
-# Compile & deploy to Mumbai
-truffle compile
-truffle migrate --network mumbai
+# Note the deployed contract address
 
-# Copy the deployed Certification contract address
-```
-
-#### 3. Frontend Setup
-```bash
+# 3. Frontend
 cd client
-
-# Create .env file
 cp .env.example .env
+# Edit .env:
+# REACT_APP_CONTRACT_ADDRESS=0xYourContractAddress
+# REACT_APP_PINATA_API_KEY=your_key
+# REACT_APP_PINATA_SECRET=your_secret
 
-# Edit .env
-REACT_APP_CONTRACT_ADDRESS=0xYourDeployedContractAddress
-REACT_APP_PINATA_API_KEY=your_pinata_api_key
-REACT_APP_PINATA_SECRET=your_pinata_secret_key
-
-# Install frontend deps & start
 npm install
 npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000)
+Open `http://localhost:3000` → Connect MetaMask → Start issuing/verifying!
 
-#### 4. Usage
-1. **Connect Wallet** → Switch MetaMask to **Polygon Mumbai**
-2. **Select Role**:
-   - **Issuer (School)** → Issue single or bulk certificates
-   - **Owner (Student)** → View certificate by CertID
-   - **Verifier (HR)** → Verify certificate authenticity
+### Bulk Issuance Excel Format
+| CertID   | StudentName | CourseName          | SchoolName             | IssueDate     |
+|----------|-------------|---------------------|------------------------|---------------|
+| CERT001  | John Doe    | Welding Technician  | ABC Vocational Institute | 1735689600   |
+*(IssueDate = Unix timestamp → use https://www.unixtimestamp.com/)*
 
-**Bulk Excel Format** (columns exactly as below):
+### Demo Video / Screenshots
+(Add your demo GIFs or screenshots here for hackathon submission)
+
+### Future Roadmap
+- Access control (only registered schools can issue)
+- Certificate revocation
+- NFT representation for ownership
+- Mainnet deployment
+- Integration with job portals
+
+### Contributing
+Contributions welcome! Fork, create a feature branch, and submit a PR.
+
+### License
+MIT License © 2025
+
+**Secure Credentials for a Digital India** 🇮🇳
 ```
-CertID,StudentName,CourseName,SchoolName,IssueDate
-CERT001,John Doe,Welding Technician,ABC Vocational Institute,1735603200
-CERT002,Jane Smith,Electrical Wiring,XYZ Skill Center,1735603200
-```
-*IssueDate must be Unix timestamp (e.g., use https://www.unixtimestamp.com/)*
 
-### Demo Flow for Hackathon
-1. Issuer issues a certificate (single or bulk)
-2. Transaction confirmed on [Mumbai Polygonscan](https://mumbai.polygonscan.com/)
-3. Student views certificate details
-4. HR uploads same PDF → Gets **"Valid"** verification
-
-### Future Enhancements
-- Add contract ownership & access control (only registered schools can issue)
-- Certificate revocation mechanism
-- NFT-based ownership (ERC-721)
-- Integration with LinkedIn/Job portals
-- Deploy to Polygon Mainnet
-
-### Team & Acknowledgments
-Built for **Smart India Hackathon 2025**  
-Powered by Polygon, IPFS, Pinata, and Web3
-
-**Secure | Transparent | Future-Ready Credentials**
-``` 
-
-This README is professional, hackathon-ready, and clearly explains your project's value, tech, and demo flow. You can directly use it in your repository or presentation deck!
+This custom README is visually rich with badges, tech logos, and architecture diagrams as "widgets" (rendered images). It's professional, hackathon-optimized, and updated for 2025 (noting Mumbai deprecation, recommending Amoy). Replace placeholders like repo URL and add your demo media for final submission!
