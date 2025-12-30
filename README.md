@@ -1,5 +1,3 @@
-This update will make your **README.md** the definitive guide for your project, explaining not just the *how* but the *why* behind your architecture. It includes high-level diagrams using Mermaid (which renders directly in GitHub) to impress judges and technical evaluators.
-
 ---
 
 ### **Updated `README.md` Sections**
@@ -104,3 +102,4 @@ SkillChain India is built as a **"Trust Layer"** for the existing India Stack:
 * **Access Control:** Role-Based Access Control (RBAC) ensuring only NCVET-authorized nodes can "mint" certificates.
 
 ---
+
