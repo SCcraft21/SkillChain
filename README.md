@@ -1,126 +1,106 @@
-```markdown
-# CertiChain: Blockchain-Based Vocational Certificate Credentialing System
+This update will make your **README.md** the definitive guide for your project, explaining not just the *how* but the *why* behind your architecture. It includes high-level diagrams using Mermaid (which renders directly in GitHub) to impress judges and technical evaluators.
 
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![Solidity](https://img.shields.io/badge/Solidity-%23363636.svg?style=for-the-badge&logo=solidity&logoColor=white)](https://soliditylang.org/)
-[![Polygon](https://img.shields.io/badge/Polygon-%238250F5.svg?style=for-the-badge&logo=polygon&logoColor=white)](https://polygon.technology/)
-[![IPFS](https://img.shields.io/badge/IPFS-%2365C2A5.svg?style=for-the-badge&logo=ipfs&logoColor=white)](https://ipfs.tech/)
-[![MetaMask](https://img.shields.io/badge/MetaMask-%23F6851B.svg?style=for-the-badge&logo=metamask&logoColor=white)](https://metamask.io/)
-[![Pinata](https://img.shields.io/badge/Pinata-%23007ACC.svg?style=for-the-badge&logo=pinata&logoColor=white)](https://pinata.cloud/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+---
 
-**A tamper-proof, decentralized platform for issuing, owning, and verifying vocational certificates.**  
-Built for **Smart India Hackathon** – Eliminating fake certificates with blockchain immutability.
+### **Updated `README.md` Sections**
 
+Add these sections after your project description to provide a deep technical dive.
 
+## 🏗️ System Architecture
 
+SkillChain India follows a **decentralized, 4-layer architecture** designed for high throughput, data integrity, and national-scale interoperability.
 
-### Key Features
-- **Single & Bulk Issuance** – Schools issue certificates (PDF or batch via Excel) in one transaction.
-- **Student Ownership** – View certificate details instantly using unique CertID.
-- **Instant HR Verification** – Upload certificate file → SHA-256 hash comparison → "Valid/Invalid" result (no issuer needed).
-- **Decentralized Storage** – Full files on IPFS (pinned via Pinata), metadata + hash on-chain.
-- **Low Cost & Fast** – Deployed on Polygon (high throughput, low fees).
+```mermaid
+graph TD
+    subgraph "Presentation Layer (Frontend)"
+        A[Issuer Web Portal - React] 
+        B[Learner Mobile App - React Native]
+        C[Verification Gateway - Web]
+    end
 
-### Tech Stack
+    subgraph "Middleware Layer (API & Logic)"
+        D[Node.js / Express Server]
+        E[Ethers.js / Web3.js]
+        F[Passport.js / Aadhaar Auth]
+    end
 
-<div align="center">
+    subgraph "Data & Storage Layer"
+        G[(PostgreSQL - MetaData)]
+        H[IPFS - Document Storage]
+    end
 
+    subgraph "Blockchain Layer (Trust Layer)"
+        I[Smart Contracts - Solidity]
+        J[Polygon Amoy Testnet Nodes]
+    end
 
+    A & B & C <--> D
+    D <--> E
+    E <--> I
+    D <--> G
+    D <--> H
+    I <--> J
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-
-### System Architecture
-
-
-
-
-1. **Issuer** uploads certificate → Pinata pins to IPFS → Gets CID (hash).
-2. CID + metadata stored on-chain via smart contract.
-3. **Student** queries contract with CertID → Views details.
-4. **Verifier** uploads file → Local hash computed → Compared with on-chain CID → Instant result.
-
-### Quick Setup & Run
-
-#### Prerequisites
-- Node.js v18+
-- MetaMask (with Polygon network added)
-- Test MATIC from [Polygon Faucet](https://faucet.polygon.technology/)
-- Pinata account
-
-#### Steps
-```bash
-# 1. Clone & install
-git clone <your-repo-url>
-cd cert-mvp
-npm install
-npm install -g truffle
-npm install @truffle/hdwallet-provider
-
-# 2. Deploy Smart Contract (use Polygon Amoy Testnet - recommended as Mumbai is deprecated)
-# Update truffle-config.js with your mnemonic & Amoy RPC: https://rpc-amoy.polygon.technology/
-truffle migrate --network amoy
-
-# Note the deployed contract address
-
-# 3. Frontend
-cd client
-cp .env.example .env
-# Edit .env:
-# REACT_APP_CONTRACT_ADDRESS=0xYourContractAddress
-# REACT_APP_PINATA_API_KEY=your_key
-# REACT_APP_PINATA_SECRET=your_secret
-
-npm install
-npm start
 ```
 
-Open `http://localhost:3000` → Connect MetaMask → Start issuing/verifying!
+---
 
-### Bulk Issuance Excel Format
-| CertID   | StudentName | CourseName          | SchoolName             | IssueDate     |
-|----------|-------------|---------------------|------------------------|---------------|
-| CERT001  | John Doe    | Welding Technician  | ABC Vocational Institute | 1735689600   |
-*(IssueDate = Unix timestamp → use https://www.unixtimestamp.com/)*
+## 📘 Understanding the Core Logic
 
-### Demo Video / Screenshots
-(Add your demo GIFs or screenshots here for hackathon submission)
+### 1. The Hashing Mechanism (The Digital Fingerprint)
 
-### Future Roadmap
-- Access control (only registered schools can issue)
-- Certificate revocation
-- NFT representation for ownership
-- Mainnet deployment
-- Integration with job portals
+To maintain **privacy** while ensuring **authenticity**, we do not store learner personal data on the blockchain.
 
-### Contributing
-Contributions welcome! Fork, create a feature branch, and submit a PR.
+* **The Process:** We concatenate the learner's details (Name, ID, Course, Date) into a single string and pass it through a **Keccak-256** hash function.
+* **The Result:** A unique 64-character string. If a single character in the certificate is changed, the hash will fail to match the record on the ledger, instantly flagging the certificate as forged.
 
-### License
-MIT License © 2025
+### 2. IPFS Integration (Decentralized Storage)
 
-**Secure Credentials for a Digital India** 🇮🇳
+Storing large PDF files on a blockchain is prohibitively expensive.
+
+* **Our Solution:** We store the visual certificate on **IPFS (InterPlanetary File System)**.
+* **The Link:** IPFS returns a **Content Identifier (CID)**. This CID is stored in the smart contract metadata, ensuring that the visual document and the blockchain record are permanently linked.
+
+### 3. Verification Workflow (The QR Code Loop)
+
+```mermaid
+sequenceDiagram
+    participant E as Employer (Scanner)
+    participant V as Verification Gateway
+    participant B as Polygon Blockchain
+    participant I as IPFS
+
+    E->>V: Scans QR Code on Certificate
+    V->>B: Queries TokenID & Data Hash
+    B-->>V: Returns Immutable Record
+    V->>V: Recalculates Hash from scan data
+    alt Hashes Match
+        V->>I: Fetch Original PDF via CID
+        V-->>E: Display "VERIFIED ✅" + Original Document
+    else Hashes Mismatch
+        V-->>E: Display "INVALID/TAMPERED ❌"
+    end
+
 ```
 
-This custom README is visually rich with badges, tech logos, and architecture diagrams as "widgets" (rendered images). It's professional, hackathon-optimized, and updated for 2025 (noting Mumbai deprecation, recommending Amoy). Replace placeholders like repo URL and add your demo media for final submission!
+---
+
+## 🇮🇳 National Integration Strategy
+
+SkillChain India is built as a **"Trust Layer"** for the existing India Stack:
+
+| Platform | Integration Method | Purpose |
+| --- | --- | --- |
+| **DigiLocker** | API / Webhooks | Push verified blockchain credentials directly to the citizen's vault. |
+| **Skill India Digital** | OAuth 2.0 / SSO | Synchronize learner profiles and certification history. |
+| **NCRF (Credit Bank)** | Smart Contract Events | Automatically update academic credit balances upon certification. |
+
+---
+
+## 🛠️ Security Standards
+
+* **Cryptography:** SHA-256 for data hashing and ECDSA for transaction signing.
+* **Privacy:** Off-chain storage of PII (Personally Identifiable Information) to comply with **DPDP Act 2023**.
+* **Access Control:** Role-Based Access Control (RBAC) ensuring only NCVET-authorized nodes can "mint" certificates.
+
+---
